@@ -1,0 +1,81 @@
+<h1 id="title" >Movies</h1>
+
+<div id="title" class="row">
+  <% @movies.each do |movie| %>
+  <div class="card col-md-3">
+    <img class="card-img-top" src="<%=movie.image_path.thumb.url %>" alt="<%= movie.title %>">
+    <div class="card-body">
+      <h5 class="card-title" data-id="8"><span><%= movie.title %></span></h5>
+      <p class="card-text">장르: <%= movie.genre %></p>
+      <p class="card-text">주연배우: <%= movie.actor %></p>
+      <p class="card-text">감독: <%= movie.director %></p>
+      <%= link_to "영화 정보보기", movie_path(movie), class: 'btn btn-primary' %>
+    </div>
+</div>
+<% end %>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @movies.each do |movie| %>
+      <tr>
+        <td><%= link_to 'Show', movie %></td>
+        <td><%= link_to 'Edit', edit_movie_path(movie) %></td>
+        <td><%= link_to 'Destroy', movie, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Movie', new_movie_path %>
+
+<hr>
+<% if user_signed_in? %>
+<!-- 로그인 된 상태 -->
+<%= current_user.email %>
+<%= link_to "로그아웃", destroy_user_session_path, method: "delete" %>
+<% else %>
+<!-- 로그아웃 된 상태 -->
+<%= link_to "로그인", new_user_session_path %>
+<% end %>
+
+<script>
+// 버튼(요소)에 마우스를 오버(이벤트) 했더니(이벤트 리스너)
+// 그 위에 있던 글자(요소)들이 갑자기 이상한 문자열로 변함(이벤트 핸들러)
+  
+// var btn = document.getElementsByClassName("btn")[0];
+
+// btn.addEventListener("mouseover", function() {
+//   var text
+//   var title = document.getElementsByClassName("card-title")[0];
+//   console.dir(title);
+//   title.innerHTML = "touch touch";
+// })
+
+// btn.addEventListener("mouseout", function() {
+//   var title = document.getElementsByClassName("card-title")[0];
+//   title.innerHTML = "";
+// })
+
+// 파란색 버튼(요소)에 마우스를 올리면(이벤트, 이벤트 리스너)
+// 해당 버튼(요소)의 class가 'btn btn-danger'로 변함
+var btn = document.getElementsByClassName("btn")[0];
+btn.addEventListener("mouseover", function() {
+  btn.setAttribute("class", "btn btn-danger")
+})
+
+var btn = document.getElementsByClassName("btn")[0];
+btn.addEventListener("mouseout", function() {
+  btn.setAttribute("class", "btn btn-primary")
+})
+
+
+</script>
