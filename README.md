@@ -285,7 +285,7 @@ end
 
 <br>
 
-# JavaScript
+# 2. JavaScript
 
 :  event를 등록하기 위해 사용함
 
