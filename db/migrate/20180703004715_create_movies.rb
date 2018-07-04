@@ -9,6 +9,7 @@ class CreateMovies < ActiveRecord::Migration[5.0]
       
       t.integer :user_id
       
+      
       t.text :description
   
       t.timestamps
