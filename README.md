@@ -1,327 +1,103 @@
-# Day 16.  jQuery , Ajax
+# Day 17. '좋아요 버튼' + 댓글 기능
 
 
 
-## 1. jQurey
+- 좋아요 버튼 + 개수 넣고 변화하는 것
 
-<br>
+- 댓글(ajax) 입력 + 삭제 + 수정(해당 댓글 위치에서 수정 가능토록)
+  - 댓글 입력시 글제제한(front + back)
+- 별점주기(좋아요 버튼 응용)
+- pagination(kaminari)
 
-$("선택자")
 
-```js
-# . --> class
-$(".btn")
 
-# # --> id
-$('#title')
+
+
+*접근방법*
+
+- 댓글을 입력받을 폼 작성
+- form(요소)이 제출(이벤트)될 때(이벤트 리스너)
+- 댓글을 쓰고밑에는 저장되는 그리고 보니까 적은 내용은 이미 날아간
+-  ajax 요청으로 내용물을 받아서 서버에 '/create/comment'로 요청을 보낸다.
+- 보낼 때는 내용물과 현재 보고 있는 movice의 id 값도 같이 보낸다.
+- 서버에서 저장하고, response로 보낼줄 js.erb 파일을 작성한다.
+- js.erb 파일에서 댓글이 표시될 영역에 등록된 댓글의 내용을 추가한다.
+
+
+
+> The `.append()` method inserts the specified content as the last child of each element in the jQuery collection (To insert it as the *first* child, use [`.prepend()`](http://api.jquery.com/prepend/)). 
+
+
+
+*comment model 만들기*
+
+- column : user_id, movie_id, contents
+- association 
+  - movie(1) - comment(N)
+  - user(1) - comment(N)
+- url ("/movies/:movie_id/comments", method: post)인 ajax 코드완성
+
+
+
+`$ rails g model`
+
+
+
+
+
+*접근방법*
+
+- 댓글에 있는 삭제 버튼(요소)을 누르면(이빈트 리스너)
+- 해당 댓글이 눈에 안보이게 되고 (이벤트 핸들러),
+- 실제 db에서도 삭제가 된다 (ajax)
+
+
+
+```erb
+    $('.destroy-comment').on('click', function(){
+        console.log("destroyed!! ");
+       $(this).parent().remove(); 
+    });
 ```
 
-<br>
+- parents 라고 했을 시 상위 태그들을 모두 데리고 옴
+- 
 
-### 첫번째 형태
 
-```js
-$('.btn').이벤트명(function() {});
 
-# Example.
-$('.btn').mouseover(function() {
-	alert("건드리지마 ㅠ")
-});
-```
+*접근방법*
 
-- javascript의 getElementByClassName과 달리 **일괄 적용**이 됨
+- 수정 버튼을 클릭하면
+- 댓글이 있던 부분이 입력창으로 바뀌면서 원래 있던 댓글의 내용이 입력창에 들어간다.
+- 수정버튼은 확인 버튼으로 바뀐다.
 
-<br>
 
-### 두번째 형태
 
-```js
-$('.btn').on('이벤트명', function() {});
+*한 줄 당 한 코드*
 
-# Example.
-$('.btn').on('mouseover', function() {
-	console.log("클릭 클릭");
-});
-```
+- 내용 수정 후 확인 버튼을 클릭하면
+- 입력창에 있던 내용물이 댓글의 원래 형태로 바뀌고
+- 확인 버튼은 다시 수정버튼으로 바뀐다.
+- 입력창에 있던 내용물으 ajax로 서버에 요청을 보낸다.
+- 서버에서는 해당 댓글을 찾아 내용을 업데이트한다.
 
-<br>
 
-*응용하기*
 
-- 마우스가 버튼 위에 올라갔을 때, 버튼에 있는 `btn-primary` 클래스를 삭제하고 btn-danger 클래스를 준다. 버튼에서 마우스가 내려왔을 때 다시 `btn-danger` 클래스를 삭제하고 `btn-primary`클래스를 추가한다. 
 
-- 여러개의 이벤트 등록하기
 
-- 요소에 class를 넣고 빼는 jQuery function을 찾기
+*1. 한 번에 하나씩만 수정하기(javascript만 사용해서 4줄)*
 
-  
+- 수정 버튼을 누르면
 
-```js
-var btn = $('.btn');
+- 전체 문서 중에서 `update-comment` 클래스를 가진 버튼이 있는 경우에
 
-btn.on('mouseenter mouseout', function() {
-	btn.removeClass("btn-primary").addClass("btn-danger");
-})
+- 더 이상 진행하지 않고 이벤트 핸들러를 끝냄
 
+  return false;
 
-btn.on('mouseenter mouseout', function() {
-	btn.toggleClass('btn-danger').togleClass('btn-primary');
-});
-```
+어떻게 동작할지 생각하기 + ajax 코드 생성(요청할 url 설정, routes에서 잡아주고, controller와 action에 요청보내기)
 
-<br>
 
-### toggleClass : remove + add 기능
 
-```js
-var btn = $('.btn');
+### Template literals
 
-btn.on('mouseenter mouseout', function() {
-	$(this).toggleClass('btn-danger').toggleClass('btn-primary');
-		console.dir(this);
-		console.dir($(this));
-});
-
-
-# a.btn.btn-danger
-# jQery.fn.init(1)
-
-# a.btn.btn-primary
-# jQuery.fn.init(1)
-```
-
-- `this` : event가 발생한 자기 자신
-- `console.dir(this);` : html 그자체가 출려됨
-
-
-
-<br>
-
-*응용하기*
-
-- 버튼에 마우스가 오버됐을 때, 상단에 있는 이미지의 속서에 `style` 속성과 `width: 100px;`의 속성 값을 부여하기
-
-```js
-btn.on('mouseover', function() {
-	$('img').attr('style', "width: 100px")
-		
-});
-
-# 속성 값 가져오기
-# 댓글 여러 개 중에 하나만 삭제할 때 활용함
-$('img').attr('style');
-```
-
-
-
-- 버튼(요소)에 마우스가 오버(이벤트)됐을 때(이벤트 리스너), 이벤트가 발생한 버튼($(this))과 상위에 있는 요소(parent) 중에서 `card-title`의 속성을 갖은 친구를 찾아(find) 텍스트(text)를 변경시킨다.
-
-```js
-btn.on('mouseover', function() {
-		$('.card-title').text("Don't touch");
-});
-```
-
-
-
-```js
-btn.on('mouseover', function() {
-		$(this).parent().find('.card-title').text("ddd");
-		
-});
-```
-
-- jQuery  siblings와 parent 차이점은?
-
-
-
-### 텍스트 변환기(오타 생성기)
-
-*index.html*
-
-```html
-<textarea id="input" placeholder="변환할 텍스트를 입력해주세요."></textarea>
-<button clss="translate">바꿔줘</button>
-<h3></h3>
-```
-
-- input에 들어있는 텍스트 중에서 '관리' -> '고나리', '확인' -> '호가인', '훤하다' -> '허누하다'의 방식으로 텍스트를 바꾸는 이벤트 핸들러 작성하기
-- https://github.com/e-/Hangul.js 에서 라이브러리를 받아서 자음과 모음을 분리하고, 다시 단어를 합치는 기능 살펴보기
-- String.split('') : `''` 안에 있는 것을 기준으로 문자열을 잘라준다 (return type: 배열)
-- Array.join('') : 배열에 들어있는 내용을 합치기
-- Array.map(function(el){ }) : 배열을 순회하면서 하나의 요소마다 function을 실행시킴 (el: 순회하는 각 요소 return type: 새로운 배열)
-
-
-
-*접근 방법*
-
-1. textarea에 있는 내용물을 가지고 오는 코드
-2. 버튼에 이벤트 리스너(click)을 달아주고, 핸들러에는 1번에서 작성한 코드를 넣는다.
-3. 1번 코드의 결과물을 한글자씩 분해해서 배열로 만들어 준다.
-4. (조건) 두번째([1]), 세번째([2]) 배열이 모음 & 네번째([3]) 내용물 존재
-5. (switch) 세번째([2])와 네번째([3]) 위치를 바꿔줘야 함
-6. 결과물로 나온 배열을 문자열로 이어준다. ('join')
-7. 결과물을 출력해줄 요소를 찾는다.
-8. 요소에 결과물을 출력한다.
-
-
-
-```
-<script type="text/javascript">
-
-  $('.translate').on('click', function() {
-    var input = $('#input').val();
-    var result = translate(input);
-    $('h3').text(result);
-    console.log(result);
-  });
-```
-
-
-
-*index.html*
-
-```js
-function translate(str) {
-  // 글자마다 자르기
-  return str.split('').map(function(el) {
-    // 글자 분해하기, el이란 변수로 넣기
-    var d = Hangul.disassemble(el);
-    
-    if(d[3] && Hangul.isVowel(d[1]) && Hangul.isVowel(d[2])){
-      var tmp = d[2];
-      d[2] = d[3];
-      d[3] = tmp;
-    }
-    return Hangul.assemble(d);
-  }).join('');
-}
-
-```
-
-- `d[3]` :  
-
-<br>
-
-<br>
-
-## 2. Ajax
-
-- javascript 에서 다른 문서에서 import를 한 것과 비슷하게 
-- javascript 동작하는 중간에 서버에 요청을 보낸다고 생각하기 (화면전환이 없음)
-- 필요한 정보는 url과 http method
-
-
-
-*기본형태*
-
-```javascript
-$.ajax({
-    url: 어느 주소로 요청을 보낼지,
-    method: 어떤 http method 요청을 보낼지,
-    data: {
-        k: v 어떤 값을 함께 보낼지,
-        // 서버에서는 params[k] => v
-    }
-})
-```
-
-
-
-
-
-## 3. '좋아요' 기능 구현
-
-- 유저가 좋아요를 누르면 화면에 나오는 그런그런 하아
-- 좋아요 --> 좋아요 취소 --> 좋아요
-
-
-
-좋아요 모델 만들기
-
-`$ rails g model like`  :  한 유저는 영화 영화에 하트, 영화도 많은 하트를 받을 수 있음 (m:n)
-
-:: 조인 테이블
-
-
-
-1. 좋아요 버튼을 눌렀을 때
-2. 서버에 요청을 보낸다. (현재 유저와 유저가 보고있는 영화가 좋다고 하는 요청)
-3. 서버가 할일
-4. 응답이 오면 좋아요 버튼 --> 좋아요 취소 바꾸고, btn-info --> btn-warning으로 변경
-
-
-
-*config/routes*
-
-```ruby
-Rails.application.routes.draw do
-	...
-  get '/likes/:movie_id' => 'movies#like_movie'
-	...
-end
-
-```
-
-- 특정 영화의 좋아요를 클릭했을 때 url로 연결시켜주기
-
-
-
-
-
-
-
-
-
-##### action명과 일치되는 js형식의 view 파일 만들기
-
-*views/movies/show.html.erb*
-
-```js
-<h1><%= @movie.title %></h1>
-<hr/>
-<p><%= @movie.description %></p>
-<%= link_to 'Edit', edit_movie_path(@movie) %> |
-<%= link_to 'Back', movies_path %><br/>
-<button class="btn btn-info like">좋아요</button>
-<script>
-$(document).on('ready', function() {
-    // jQuery로 like 버튼을 찾기
-    $('.like').on('click', function() {
-        console.log("like");
-        $.ajax({
-            url: '/likes/<%= @movie.id %>'
-            
-        });
-    })
-});
-</script>
-```
-
-- `$(document).on('ready', function() {}` : document가 전부 로드 된 후에 javascript를 로드한다.
-
-
-
-*views/movies/like_movie.js.erb*
-
-```js
-alert("좋아요 설정 완료");
-```
-
-
-
-
-
-
-
-> 참고문서
->
-> - https://github.com/e-/Hangul.js  :  텍스트 변환기
-
-
-
-> Today's error 
->
-> - 입력 값을 받아오지 못할 때 --> 
-> - 루비와 달리 javascrip는 return 값이 존재해야 함
-> - redirect_to : get방식으로 또다른 url 페이지로 넘김

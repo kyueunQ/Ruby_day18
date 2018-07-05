@@ -1,15 +1,20 @@
+alert("좋아요 설정 완료");
+var like_count = parseInt($('.like-count').text());
 
 if(<%= @like.frozen? %>) {
-// 좋아요가 취소된 경우  frozen? true
-// 좋아요 취소버튼 --> 좋아요 버튼
-alert("좋아요 설정 완료");
-$('.btn').text("좋아요 취소").toggleClass("btn-warning btn-info");
-
+    console.log("des");
+    //alert("좋아요 취소");
+    like_count = like_count - 1;
+    $('.like').html(`좋아요(<span class='like-count'>${like_count}</span>)`).addClass("btn-info").removeClass("btn-warning");
+    
 } else {
-
+    console.log("cre");
 // 좋아요가 새로 눌린 경우 frozen? false
-// 좋아요 버튼 --> 좋아요 취소
-alert("좋아요 설정 완료");
-$('.btn').text("좋아요 취소").toggleClass("btn-warning btn-info");
+// 좋아요 버튼 -> 좋아요 취소
+    //alert("좋아요 설정 완료()");
+    like_count = like_count + 1;
+    $('.like').html(`좋아요 취소(<span class='like-count'>${like_count}</span>)`).addClass("btn-warning").removeClass("btn-info");
 
 }
+
+console.log(like_count);

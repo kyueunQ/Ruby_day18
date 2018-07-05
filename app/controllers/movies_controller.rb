@@ -1,7 +1,7 @@
 class MoviesController < ApplicationController
   before_action :js_authenticate_user!, only: [:like_movie]
   before_action :authenticate_user!, except: [:index, :show]
-  before_action :set_movie, only: [:show, :edit, :update, :destroy]
+  before_action :set_movie, only: [:show, :edit, :update, :destroy, :create_comment]
 
   # GET /movies
   # GET /movies.json
@@ -12,6 +12,9 @@ class MoviesController < ApplicationController
   # GET /movies/1
   # GET /movies/1.json
   def show
+    @uer_likes_movie = Like.where(user_id: current_user.id, movie_id: @movie.id).first if user_signed_in?
+    @movies = Movie.all
+
   end
 
   # GET /movies/new
@@ -64,6 +67,7 @@ class MoviesController < ApplicationController
   end
   
   
+  
   def like_movie
     p params
     # 현재 유저와 params에 담긴 movie 간의
@@ -74,16 +78,32 @@ class MoviesController < ApplicationController
     else
       @like.destroy
     end
-    @like.frozen?
+    puts @like.frozen?
     
     # 만약에 현재 로그인한 유저가 이미 좋아요를 눌렀을 경우
     # 해당 Like 인스턴스 삭제
     # 새로 누른 경우
     # 좋아요 관계 설정
-    Like.create(user_id: current_user.id, movie_id: params[:movie_id])
+    # Like.create(user_id: current_user.id, movie_id: params[:movie_id])
     puts "좋아요 설정 끝 꺄륵"
   end
   
+  def create_comment
+    # @movie = Movie.find(params[:id])
+    @comment = Comment.create(user_id: current_user.id, movie_id: @movie.id, contents: params[:contents])
+    # @movie.comments.new(user_id: current_user.id).save  #위에의 축약형
+  end
+
+  def destroy_comment
+    @comment = Comment.find(params[:comment_id]).destroy
+  end
+  
+  def update_comment
+
+    @comment = Comment.find(params[:comment_id])
+    @comment.update(contents: params[:contents])
+  end
+
 
   private
     # Use callbacks to share common setup or constraints between actions.
