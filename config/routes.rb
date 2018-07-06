@@ -1,15 +1,16 @@
 Rails.application.routes.draw do
   devise_for :users
   root 'movies#index'
-  resources :movies
   
   resources :movies do
     member do
       post '/comments' => 'movies#create_comment'
+      # movies/id/
     end
     collection do
       delete '/comments/:comment_id' => 'movies#destroy_comment'
       patch '/comments/:comment_id' => 'movies#update_comment'
+      get '/search_movie' => 'movies#search_movie'
     end
     
     #   collection do

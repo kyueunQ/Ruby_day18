@@ -43,9 +43,8 @@ $(document).on('ready',function(){
         });
     })  
     $('.comment').on('submit', function(e) {
-        e.preventDefault();   //이게뭐라고?
+        e.preventDefault();   // 기본적으로 submit 버튼이 가지고 있는 창 변환 기능을 없애기
         var comm = $('.comment-contents').val();
-        console.log(comm);
         //data가 여기로 넘어감
         $.ajax({  
            url: "/movies/<%= @movie.id %>/comments", 
@@ -55,6 +54,7 @@ $(document).on('ready',function(){
            }
         });
     })
+    
     $(document).on('click', '.destroy-comment', function(){  //다시한번 reload하려고 document
         console.log("destroyed!!!");
         var comment_id = $(this).attr('data-id'); 
