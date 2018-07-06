@@ -1,4 +1,4 @@
-Day 
+# Day 18. Gem faker, #태그, Pagination
 
 
 
@@ -44,9 +44,10 @@ end
 ```
 
 - `%w` : `,` 를 사용할 필요 없이 엔터만을 통해 요소들을 구분함
-- 
+- `rake db:reset`을 통해 column은 유지한 데이터를 새로 업로드하기
+  - `rake db:drop`, `rake db:migrate`를 한 경우 회원가입한 데이터가 사라지기 때문에 `User.create(email: "aaa@gmail.com", password: "123456", password_confirmation: "123456")` 를 함께 생성해서 오류가 나는 것을 방지한다.
 
-
+ 
 
 
 
